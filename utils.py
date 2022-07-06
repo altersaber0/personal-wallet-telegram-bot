@@ -3,7 +3,8 @@ from os import getenv
 
 
 def authorize(func):
-    """Decorator for all command and message handlers, ensures responding only to given User ID (my)"""
+    """Decorator for all Command and Message handler functions,
+    ensures responding only to given User ID (my)"""
     def wrapper(update: Update, *args, **kwargs):
         if update.effective_user.id != int(getenv("TELEGRAM_USER_ID")):
             update.message.reply_text("Access denied")
