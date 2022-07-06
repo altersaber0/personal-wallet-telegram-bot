@@ -119,6 +119,9 @@ def handle_expense(update: Update) -> None:
         message = update.message.text    
 
         # Checking if function is called by Command Handler instead of Message Handler
+        if message == "/expense":
+            update.message.reply_text("❌Ошибка в записи расхода❌")
+            return
         if message.split()[0] == "/expense":
             message = " ".join(message.split()[1:])
 
