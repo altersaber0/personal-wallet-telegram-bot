@@ -115,14 +115,20 @@ def parse_expense(message: str) -> Expense:
 
 def handle_expense(update: Update) -> None:
     try:
+        message = update.message.text    
+
+        # Checking if function is called by Command Handler instead of Message Handler
+        if message.split()[0] == "/expense":
+            message = " ".join(message.split()[1:])
+
         # Getting Expense Object
-        expense: Expense = parse_expense(update.message.text)
+        expense: Expense = parse_expense(message)
 
         # Calculating and setting new balance
         new_balance = get_balance() - expense.money
         set_balance(new_balance)
 
-        # Add the expense to the database (csv-file of the current month)
+        # Add the expense to the database (csv file of the current month)
         db.add_expense(expense)
 
         # Construct the reply depending on the description

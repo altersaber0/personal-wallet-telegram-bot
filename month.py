@@ -30,7 +30,7 @@ def is_valid_month(message: str) -> bool:
 def handle_month_query(update: Update):
 
     # Get all expenses in current month
-    if update.message.text.lower() == "месяц" or update.message.text.lower() == "month":
+    if update.message.text.lower() in ["месяц", "month", "/month"]:
         try:
             expenses = db.current_month_expenses()
             expenses = [Expense(*expense) for expense in expenses]

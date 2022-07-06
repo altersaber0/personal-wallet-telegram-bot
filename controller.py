@@ -1,4 +1,5 @@
 # Environment variables and threading for terminal loop
+from ctypes import util
 from dotenv import load_dotenv
 import os
 import threading
@@ -42,6 +43,26 @@ cv {из} {в}  -> Курс первой валюты ко второй
 cv {число} {из} {в}  -> Перевод суммы из одной валюты в другую
     """)
 
+@utils.authorize
+def expense(update: Update, context):
+    expenses.handle_expense(update)
+
+@utils.authorize
+def income(update: Update, context):
+    incomes.handle_income(update)
+
+@utils.authorize
+def balance_query(update: Update, context):
+    balance.handle_balance_query(update, API_KEY=os.getenv("EXCHANGE_RATE_API_KEY"))
+
+@utils.authorize
+def convert(update: Update, context):
+    exchange.handle_exchange_query(update, API_KEY=os.getenv("EXCHANGE_RATE_API_KEY"))
+
+@utils.authorize
+def month_query(update: Update, context):
+    month.handle_month_query(update)
+
 # Handle message based on its type (first word determines the type)
 @utils.authorize
 def handle_message(update: Update, context):
@@ -73,9 +94,14 @@ def main():
     # Custom Filter to filter down any requests from all users except me (my User ID)
     correct_user_filter = Filters.user(user_id=int(os.getenv("TELEGRAM_USER_ID")))
 
-    # Хэндлеры команд и сообщений
+    # All handlers
     dp.add_handler(CommandHandler("start", start, filters=correct_user_filter))
     dp.add_handler(CommandHandler("help", help, filters=correct_user_filter))
+    dp.add_handler(CommandHandler("expense", expense, filters=correct_user_filter))
+    dp.add_handler(CommandHandler("income", income, filters=correct_user_filter))
+    dp.add_handler(CommandHandler("balance", balance_query, filters=correct_user_filter))
+    dp.add_handler(CommandHandler("convert", convert, filters=correct_user_filter))
+    dp.add_handler(CommandHandler("month", month_query, filters=correct_user_filter))
     dp.add_handler(MessageHandler(Filters.text & correct_user_filter, handle_message))
 
     print("Bot running...")

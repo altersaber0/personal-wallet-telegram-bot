@@ -25,7 +25,7 @@ def get_type_of_message(message: str) -> str:
         return "income"
     if command in ["bl", "balance", "total", "Баланс", "баланс", "Всего", "всего"]:
         return "balance"
-    if command == "cv":
+    if command == "cv" or command == "convert":
         return "exchange_query"
     if command.lower() in ["месяц", "month"]:
         return "month"

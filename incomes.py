@@ -21,7 +21,7 @@ def is_valid_income(message: str) -> bool:
     except IndexError:
         return False
     try:
-        if int(money) != 0:
+        if float(money) != 0:
             return True
     except ValueError:
         return False
@@ -36,7 +36,7 @@ def parse_income(message: str) -> Income:
 
         # Get part of a message after a number and remove useless whitespaces from it
         source = " ".join(message.partition(money)[2].split())
-        return Income(int(money), source)
+        return Income(int(float(money)), source)
     else:
         raise InvalidIncomeError("Invalid income syntax")
 
