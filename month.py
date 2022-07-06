@@ -28,6 +28,8 @@ def is_valid_month(message: str) -> bool:
 
 
 def handle_month_query(update: Update):
+    """Check message validity, then show all expenses in the current month or 
+    show statistic of the given month"""
 
     # Get all expenses in current month
     if update.message.text.lower() in ["месяц", "month", "/month"]:

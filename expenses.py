@@ -114,6 +114,7 @@ def parse_expense(message: str) -> Expense:
 
 
 def handle_expense(update: Update) -> None:
+    """Check message validity, add expense to database and set new balance"""
     try:
         message = update.message.text    
 

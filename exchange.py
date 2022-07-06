@@ -67,7 +67,7 @@ def parse_exchange_query(message: str) -> Exchange_Query:
 
 
 def handle_exchange_query(update: Update, API_KEY: str) -> None:
-
+    """Send conversion rate (of a number) from one currency to another"""
     try:
         query: Exchange_Query = parse_exchange_query(update.message.text)
         result_obj = query.convert(API_KEY)

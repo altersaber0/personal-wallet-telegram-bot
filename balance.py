@@ -62,6 +62,7 @@ def get_type_of_balance_query(message: str) -> str:
 
 
 def handle_balance_query(update: Update, API_KEY: str) -> None:
+    """Send, set new, or convert balance to another currency depending on the command syntax"""
     try:
         query_type = get_type_of_balance_query(update.message.text)
         # Getting

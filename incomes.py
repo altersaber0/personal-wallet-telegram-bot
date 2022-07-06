@@ -42,6 +42,7 @@ def parse_income(message: str) -> Income:
 
 
 def handle_income(update: Update) -> None:
+    """Check message validity and set new balance"""
     try:
         # Getting Income object
         income: Income = parse_income(update.message.text)
