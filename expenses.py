@@ -1,5 +1,6 @@
 from typing import NamedTuple
 from telegram.update import Update
+import datetime
 from balance import get_balance, set_balance
 import db
 
@@ -32,6 +33,7 @@ class InvalidExpenseError(Exception):
     pass
 
 class Expense(NamedTuple):
+    date: str
     money: int
     category: str
     description: str = ""
@@ -103,7 +105,9 @@ def parse_expense(message: str) -> Expense:
         capitalized_category = capitalize_string(category)
         fixed_description = f"{capitalized_category} {fixed_description}".rstrip()
 
-        expense = Expense(int(money), fixed_category, fixed_description)
+        date = ".".join(str(datetime.date.today()).split("-"))
+
+        expense = Expense(date, int(money), fixed_category, fixed_description)
         return expense
     else:
         raise InvalidExpenseError("Invalid expense syntax")

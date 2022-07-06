@@ -16,7 +16,7 @@ def fixed_month(date: datetime.date) -> str:
     return ".".join(str(date).split("-")[:2])
 
 
-def path_of_month(month):
+def path_of_month(month: str) -> str:
     """Getting absolute path to the {month}.csv file"""
 
     cwd = getcwd()
@@ -31,24 +31,29 @@ def add_expense(expense) -> None:
     month = fixed_month(datetime.date.today())
     month_file_path = path_of_month(month)
 
-    expense_string = ["","",""]
-    expense_string[0] = str(expense.money)
-    expense_string[1] = expense.category
-    expense_string[2] = expense.description
-
-
     # Creating {month}.csv file if it doesn't exist yet and add the headers
     if not os.path.exists(month_file_path):
         with open(month_file_path, "a", encoding="utf8") as f:
-            f.write("Сумма|Категория|Описание\n")
+            f.write("Номер|Дата|Сумма|Категория|Описание\n")
 
-    # Appending the expense in following format: "...|...|..."
+    # Calculating index for expense
+    new_index = ""
+    with open(month_file_path, "r", encoding="utf8") as f:
+        if (last_number := f.readlines()[-1].split("|")[0]) == "Номер":
+            new_index = "1"
+        elif last_number.isdigit():
+            new_index = int(last_number) + 1
+    
+    # Full list of parameters for writing into file
+    full_list = [str(x) for x in (new_index, *expense._asdict().values())]
+    
+    # Appending the expense in following format: "...|...|...|...|..."
     with open(month_file_path, "a", encoding="utf8") as f:
-        new_line = "|".join([x for x in expense_string]) + "\n"
+        new_line = "|".join(full_list) + "\n"
         f.write(new_line)
 
 
-def current_month_expenses() -> list[str]:
+def current_month_expenses() -> list[list[str]]:
     """Get all current month expenses as a list"""
     expenses = []
 
@@ -62,8 +67,8 @@ def current_month_expenses() -> list[str]:
             # Skip headers (first line)
             next(file)
             for line in file:
-                line = " ".join(line.split("|"))
-                expenses.append(line)
+                expense_attributes_list = line.split("|")[1:]
+                expenses.append(expense_attributes_list)
     except FileNotFoundError:
         raise MonthParseError
 
@@ -77,6 +82,9 @@ def month_stat(month: str):
         df = pd.read_csv(month_file_path, sep="|")
     except:
         raise MonthParseError("Файла не существует")
+    
+    # Total number of expenses
+    quantity = int(df.tail(1)["Номер"])
 
     # Total money spent in this month:
     total = 0
@@ -93,6 +101,7 @@ def month_stat(month: str):
     for i in range(5):
         expense_df = sorted_notnull_df.iloc[i]
         expense = {
+            "date": expense_df["Дата"],
             "money": expense_df["Сумма"],
             "category": expense_df["Категория"],
             "description": expense_df["Описание"]
@@ -121,6 +130,7 @@ def month_stat(month: str):
     return {
         "month": month,
         "total": total,
+        "quantity": quantity,
         "biggest_expenses": biggest_expenses,
         "each_category_total": each_category_total
     }

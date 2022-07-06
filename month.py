@@ -5,6 +5,7 @@ import datetime
 from telegram.update import Update
 
 import db
+from expenses import Expense
 
 
 def is_valid_month(message: str) -> bool:
@@ -32,9 +33,10 @@ def handle_month_query(update: Update):
     if update.message.text.lower() == "месяц" or update.message.text.lower() == "month":
         try:
             expenses = db.current_month_expenses()
+            expenses = [Expense(*expense) for expense in expenses]
             msg = ""
             for index, expense in enumerate(expenses):
-                msg += f"{index+1}. {expense}"
+                msg += f"{index+1}. {expense.money} {expense.category}\nОписание: {expense.description}Дата: {expense.date}\n"
             update.message.reply_text(msg)
             current_month = db.fixed_month(datetime.date.today())
             current_month_file_path = db.path_of_month(current_month)
@@ -55,15 +57,17 @@ def handle_month_query(update: Update):
         return
 
     msg = f"""
-   Месяц: {month_stat["month"]}
+Месяц: {month_stat["month"]}
 Всего потрачено: {month_stat["total"]}
+Количество расходов: {month_stat["quantity"]}\n
 Самые большие расходы:
-    1. {month_stat["biggest_expenses"][0]["money"]} {month_stat["biggest_expenses"][0]["category"]} {month_stat["biggest_expenses"][0]["description"]}
-    2. {month_stat["biggest_expenses"][1]["money"]} {month_stat["biggest_expenses"][1]["category"]} {month_stat["biggest_expenses"][1]["description"]}
-    3. {month_stat["biggest_expenses"][2]["money"]} {month_stat["biggest_expenses"][2]["category"]} {month_stat["biggest_expenses"][2]["description"]}
-    4. {month_stat["biggest_expenses"][3]["money"]} {month_stat["biggest_expenses"][3]["category"]} {month_stat["biggest_expenses"][3]["description"]}
-    5. {month_stat["biggest_expenses"][4]["money"]} {month_stat["biggest_expenses"][4]["category"]} {month_stat["biggest_expenses"][4]["description"]}
-    """
+"""
+    for index, expense in enumerate(month_stat['biggest_expenses']):
+        msg += f"""{index+1}. {expense['money']} {expense['category']}
+Описание: {expense['description']}
+Дата: {expense['date']}
+"""
+
     db.generate_bar_chart_img(month_stat)
     update.message.reply_text(msg)
 
