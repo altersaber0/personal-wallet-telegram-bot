@@ -3,6 +3,7 @@ import os.path
 from os import getcwd
 import pandas as pd
 import matplotlib.pyplot as plt
+import balance
 
 
 class MonthParseError(Exception):
@@ -25,7 +26,6 @@ def path_of_month(month: str) -> str:
     return month_file_path
 
 
-# Главная функция: добавление расхода в csv файл с названием сегодняшнего дня
 def add_expense(expense) -> None:
     """Add expense to a csv file of the current month"""
     month = fixed_month(datetime.date.today())
@@ -51,6 +51,41 @@ def add_expense(expense) -> None:
     with open(month_file_path, "a", encoding="utf8") as f:
         new_line = "|".join(full_list) + "\n"
         f.write(new_line)
+
+
+def delete_expense(index: int):
+    """Delete expense from database by its index in the current month"""
+
+    # Getting path to file of the current month
+    month = fixed_month(datetime.date.today())
+    month_file_path = path_of_month(month)
+
+    # Creating DataFrame
+    try:
+        df = pd.read_csv(month_file_path, sep="|")
+    except FileNotFoundError:
+        raise MonthParseError
+
+    # Getting the expense to be deleted for returning from the function
+    deleted_expense = {
+        "date": df.iloc[index-1]["Дата"],
+        "money": df.iloc[index-1]["Сумма"],
+        "category": df.iloc[index-1]["Категория"],
+        "description": df.iloc[index-1]["Описание"]
+    }
+
+    # Deleting the expense
+    df.drop(index=index-1, axis=0, inplace=True)
+    df.reset_index(drop=True, inplace=True)
+
+    # Resetting new index for every left expense
+    for i in range(len(list((df.iterrows())))):
+        df.loc[i, ["Номер"]] = i + 1
+    
+    # Saving file
+    df.to_csv(month_file_path, sep="|", index=False)
+
+    return deleted_expense
 
 
 def current_month_expenses() -> list[list[str]]:
