@@ -1,5 +1,4 @@
 # Environment variables and threading for terminal loop
-from ctypes import util
 from dotenv import load_dotenv
 import os
 import threading
@@ -15,8 +14,8 @@ import balance
 import exchange
 import month
 import deleting
-import utils
 import cli
+import utils
 
 
 # Start command handler function
@@ -119,7 +118,7 @@ def main():
     terminal_thread.start()
 
     # Starting connection to Telegram servers
-    updater.start_polling(poll_interval=5, timeout=5)
+    updater.start_polling(poll_interval=1, timeout=5)
     updater.idle()
 
 
