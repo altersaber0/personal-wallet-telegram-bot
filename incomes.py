@@ -54,4 +54,4 @@ def handle_income(update: Update) -> None:
         update.message.reply_text(f"Добавлен доход:\n+{income.money} {income.source}\n🌠 Баланс: {new_balance} грн")
 
     except InvalidIncomeError:
-        update.message.reply_text("❌Ошибка в записи дохода❌")
+        update.message.reply_text("❌ Ошибка в записи дохода")

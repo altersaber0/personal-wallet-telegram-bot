@@ -136,14 +136,14 @@ def handle_expense(update: Update) -> None:
         db.add_expense(expense)
 
         # Construct the reply depending on the description
-        exp = f"Добавлен расход:\n−{expense.money} {expense.category}\n"
+        exp = f"Добавлен расход:\n-{expense.money} {expense.category}\n"
         bl = f"🌠 Баланс: {new_balance} грн"
         desc = ""
         if expense.description == "":
-            desc = "➡️ Без описания.\n"
+            desc = "🎇 Без описания.\n"
         else:
-            desc = f"➡️ {expense.description}\n"
+            desc = f"🎇 Описание: {expense.description}\n"
         update.message.reply_text(exp + desc + bl)
 
     except InvalidExpenseError:
-        update.message.reply_text("❌Ошибка в записи расхода❌")
+        update.message.reply_text("❌ Ошибка в записи расхода")

@@ -38,16 +38,13 @@ def handle_month_query(update: Update):
             expenses = [Expense(*expense) for expense in expenses]
             msg = ""
             for index, expense in enumerate(expenses):
-                msg += f"{index+1}. {expense.money} {expense.category}\nОписание: {expense.description}Дата: {expense.date}\n"
+                msg += f"{index+1}. {expense.category} {expense.money}\n🎇 Описание: {expense.description}🗓 Дата: {expense.date}\n"
             update.message.reply_text(msg)
-            current_month = db.fixed_month(datetime.date.today())
-            current_month_file_path = db.path_of_month(current_month)
-            update.message.reply_document(document=open(current_month_file_path, encoding="utf8"))
         except db.MonthParseError:
-            update.message.reply_text("В этом месяце еще не было расходов.\nФайла не существует")
+            update.message.reply_text("❌ В этом месяце еще не было расходов.\nФайла не существует")
         return
     if not is_valid_month(update.message.text):
-        update.message.reply_text("Ошибка в записи месяца.\nФормат должен быть YYYY.MM")
+        update.message.reply_text("❌ Ошибка в записи месяца.\nФормат должен быть YYYY.MM")
         return
 
     # Get statistic and barchart of the given month
@@ -55,7 +52,7 @@ def handle_month_query(update: Update):
     try:
         month_stat = db.month_stat(month)
     except db.MonthParseError:
-        update.message.reply_text("В данном месяце не было расходов.\nФайла не существует")
+        update.message.reply_text("❌ В данном месяце не было расходов.\nФайла не существует")
         return
 
     msg = f"""
@@ -65,9 +62,9 @@ def handle_month_query(update: Update):
 Самые большие расходы:
 """
     for index, expense in enumerate(month_stat['biggest_expenses']):
-        msg += f"""{index+1}. {expense['money']} {expense['category']}
-Описание: {expense['description']}
-Дата: {expense['date']}
+        msg += f"""{index+1}. {expense['category']} {expense['money']}
+🎇 Описание: {expense['description']}
+🗓 Дата: {expense['date']}
 """
 
     db.generate_bar_chart_img(month_stat)

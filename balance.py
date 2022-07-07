@@ -84,6 +84,6 @@ def handle_balance_query(update: Update, API_KEY: str) -> None:
             # result_obj["base_symbol"]
             update.message.reply_text(f"{result_obj['base_symbol']}{get_balance()} = {result_obj['target_symbol']}{float(result_obj['conversion_result']):.2f}" + f" ({result_obj['base_symbol']}1 = {result_obj['target_symbol']}{float(result_obj['conversion_rate'])})")
     except InvalidBalanceQuery:
-        update.message.reply_text("❌Ошибка в записи запроса❌")
+        update.message.reply_text("❌ Ошибка в записи запроса")
     except (ConnectionError, Timeout):
-        update.message.reply_text("❌Ошибка при подключении к API курсов валют. Попробуйте позже.")
+        update.message.reply_text("❌ Ошибка при подключении к API курсов валют. Попробуйте позже.")

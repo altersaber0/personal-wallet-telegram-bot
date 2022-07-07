@@ -66,22 +66,38 @@ def delete_expense(index: int):
     except FileNotFoundError:
         raise MonthParseError
 
-    # Getting the expense to be deleted for returning from the function
-    deleted_expense = {
-        "date": df.iloc[index-1]["Дата"],
-        "money": df.iloc[index-1]["Сумма"],
-        "category": df.iloc[index-1]["Категория"],
-        "description": df.iloc[index-1]["Описание"]
-    }
+    if index > df.tail(1).index + 1:
+        raise ValueError
 
-    # Deleting the expense
-    df.drop(index=index-1, axis=0, inplace=True)
-    df.reset_index(drop=True, inplace=True)
+    if index > 0:
+        # Getting the expense to be deleted for returning from the function
+        deleted_expense = {
+            "date": df.iloc[index-1]["Дата"],
+            "money": int(df.iloc[index-1]["Сумма"]),
+            "category": df.iloc[index-1]["Категория"],
+            "description": df.iloc[index-1]["Описание"]
+        }
 
-    # Resetting new index for every left expense
-    for i in range(len(list((df.iterrows())))):
-        df.loc[i, ["Номер"]] = i + 1
+        # Deleting the expense
+        df.drop(index=index-1, axis=0, inplace=True)
+
+        # Resetting new index for every left expense
+        df.reset_index(drop=True, inplace=True)
+        for i in range(len(list((df.iterrows())))):
+            df.loc[i, ["Номер"]] = i + 1
     
+    if index == -1:
+        # Getting the expense to be deleted for returning from the function
+        deleted_expense = {
+            "date": df.iloc[index]["Дата"],
+            "money": int(df.iloc[index]["Сумма"]),
+            "category": df.iloc[index]["Категория"],
+            "description": df.iloc[index]["Описание"]
+        }
+    
+        # Deleting the expense
+        df.drop(df.tail(1).index, axis=0, inplace=True)
+
     # Saving file
     df.to_csv(month_file_path, sep="|", index=False)
 

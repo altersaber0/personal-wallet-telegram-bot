@@ -16,7 +16,7 @@ def authorize(func):
 
 def get_type_of_message(message: str) -> str:
     """Parse first word of a message to determine its type"""
-    command = message.split()[0]
+    command = message.split()[0].lower()
     try:
         int(command[0])
         return "expense"
@@ -24,12 +24,14 @@ def get_type_of_message(message: str) -> str:
         pass
     if command[0] == "+":
         return "income"
-    if command in ["bl", "balance", "total", "Баланс", "баланс", "Всего", "всего"]:
+    if command in ["bl", "balance", "total", "баланс", "всего"]:
         return "balance"
-    if command == "cv" or command == "convert":
+    if command in ["cv", "convert"]:
         return "exchange_query"
-    if command.lower() in ["месяц", "month"]:
+    if command in ["месяц", "month"]:
         return "month"
+    if command in ["del", "delete"]:
+        return "delete"
     # if command[0] == ".":
     #     return "todo"
     # if command[0] == "?":

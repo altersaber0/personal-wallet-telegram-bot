@@ -14,6 +14,7 @@ import incomes
 import balance
 import exchange
 import month
+import deleting
 import utils
 import cli
 
@@ -63,6 +64,10 @@ def convert(update: Update, context):
 def month_query(update: Update, context):
     month.handle_month_query(update)
 
+@utils.authorize
+def delete_expense(update: Update, context):
+    deleting.handle_expense_deleting(update)
+
 # Handle message based on its type (first word determines the type)
 @utils.authorize
 def handle_message(update: Update, context):
@@ -78,6 +83,8 @@ def handle_message(update: Update, context):
             exchange.handle_exchange_query(update, API_KEY=os.getenv("EXCHANGE_RATE_API_KEY"))
         case "month":
             month.handle_month_query(update)
+        case "delete":
+            deleting.handle_expense_deleting(update)
         case _:
             update.message.reply_text("Неизвестная команда😐")
 
@@ -102,6 +109,7 @@ def main():
     dp.add_handler(CommandHandler("balance", balance_query, filters=correct_user_filter))
     dp.add_handler(CommandHandler("convert", convert, filters=correct_user_filter))
     dp.add_handler(CommandHandler("month", month_query, filters=correct_user_filter))
+    dp.add_handler(CommandHandler("del", delete_expense, filters=correct_user_filter))
     dp.add_handler(MessageHandler(Filters.text & correct_user_filter, handle_message))
 
     print("Bot running...")
