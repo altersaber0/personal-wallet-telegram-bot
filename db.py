@@ -3,7 +3,6 @@ import os.path
 from os import getcwd
 import pandas as pd
 import matplotlib.pyplot as plt
-import balance
 
 
 class MonthParseError(Exception):
@@ -71,11 +70,12 @@ def delete_expense(index: int):
 
     if index > 0:
         # Getting the expense to be deleted for returning from the function
+        row = df.iloc[index-1]
         deleted_expense = {
-            "date": df.iloc[index-1]["Дата"],
-            "money": int(df.iloc[index-1]["Сумма"]),
-            "category": df.iloc[index-1]["Категория"],
-            "description": df.iloc[index-1]["Описание"]
+            "date": row["Дата"],
+            "money": int(row["Сумма"]),
+            "category": row["Категория"],
+            "description": row["Описание"]
         }
 
         # Deleting the expense
@@ -88,11 +88,12 @@ def delete_expense(index: int):
     
     if index == -1:
         # Getting the expense to be deleted for returning from the function
+        row = df.iloc[index]
         deleted_expense = {
-            "date": df.iloc[index]["Дата"],
-            "money": int(df.iloc[index]["Сумма"]),
-            "category": df.iloc[index]["Категория"],
-            "description": df.iloc[index]["Описание"]
+            "date": row["Дата"],
+            "money": int(row["Сумма"]),
+            "category": row["Категория"],
+            "description": row["Описание"]
         }
     
         # Deleting the expense

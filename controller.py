@@ -1,11 +1,5 @@
-# Environment variables and threading for terminal loop
-from dotenv import load_dotenv
-import os
-import threading
-
-# Telegram stuff
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram.update import Update
+import os
 
 # My modules
 import expenses
@@ -14,33 +8,31 @@ import balance
 import exchange
 import month
 import deleting
-import cli
 import utils
 
 
-# Start command handler function
 @utils.authorize
 def start(update: Update, context):
     update.message.reply_text("""
     Бот для учета расходов и доходов.
     """)
 
-# Help command handler function
 @utils.authorize
 def help(update: Update, context):
     update.message.reply_text("""
     Список команд:
-/start  -> Начало работы
-/help   -> Это сообщение
-bl  -> Посмотреть баланс
-bl {число}  -> Установить новый баланс
-bl {валюта}  -> Перевести баланс в другую валюту
-{число} {категория} {описание}  -> Добавить расход
-+ {число} {источник}  -> Добавить доход
-месяц   -> Список всех расходов за текущий месяц
+/start  -> Начало работы.
+/help   -> Это сообщение.
+bl  -> Посмотреть баланс.
+bl {число}  -> Установить новый баланс.
+bl {валюта}  -> Перевести баланс в другую валюту.
+{число} {категория} {описание}  -> Добавить расход. Описание опционально.
+del {номер}  -> Удалить расход по номеру в списке месяца. -1 или \"last\" удаляет последний.
++ {число} {источник}  -> Добавить доход.
+месяц   -> Список всех расходов за текущий месяц.
 месяц YYYY.MM  ->  Статистика расходов за месяц YYYY.MM
-cv {из} {в}  -> Курс первой валюты ко второй
-cv {число} {из} {в}  -> Перевод суммы из одной валюты в другую
+cv {из} {в}  -> Курс первой валюты ко второй.
+cv {число} {из} {в}  -> Перевод суммы из одной валюты в другую.
     """)
 
 @utils.authorize
@@ -86,41 +78,3 @@ def handle_message(update: Update, context):
             deleting.handle_expense_deleting(update)
         case _:
             update.message.reply_text("Неизвестная команда😐")
-
-
-
-def main():
-
-    load_dotenv()
-
-    # Initializing the Bot
-    updater = Updater(token=os.getenv("TELEGRAM_BOT_TOKEN"))
-    dp = updater.dispatcher
-
-    # Custom Filter to filter down any requests from all users except me (my User ID)
-    correct_user_filter = Filters.user(user_id=int(os.getenv("TELEGRAM_USER_ID")))
-
-    # All handlers
-    dp.add_handler(CommandHandler("start", start, filters=correct_user_filter))
-    dp.add_handler(CommandHandler("help", help, filters=correct_user_filter))
-    dp.add_handler(CommandHandler("expense", expense, filters=correct_user_filter))
-    dp.add_handler(CommandHandler("income", income, filters=correct_user_filter))
-    dp.add_handler(CommandHandler("balance", balance_query, filters=correct_user_filter))
-    dp.add_handler(CommandHandler("convert", convert, filters=correct_user_filter))
-    dp.add_handler(CommandHandler("month", month_query, filters=correct_user_filter))
-    dp.add_handler(CommandHandler("del", delete_expense, filters=correct_user_filter))
-    dp.add_handler(MessageHandler(Filters.text & correct_user_filter, handle_message))
-
-    print("Bot running...")
-  
-    # Creating a separate thread for recieving terminal commands
-    terminal_thread = threading.Thread(target=cli.terminal_loop)
-    terminal_thread.start()
-
-    # Starting connection to Telegram servers
-    updater.start_polling(poll_interval=1, timeout=5)
-    updater.idle()
-
-
-if __name__ == "__main__":
-    main()
