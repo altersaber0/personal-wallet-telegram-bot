@@ -1,6 +1,9 @@
-from typing import NamedTuple
 from telegram.update import Update
+
+from typing import NamedTuple
 import datetime
+import json
+
 from balance import get_balance, set_balance
 import db
 
@@ -10,15 +13,9 @@ def fix_category(category: str):
     Replace category with a proper name if it's an alias or with \"Other\" if not
     """
 
-    # Aliases for all categories
-    categories = {
-        "Продукты": ["продукты", "еда", "магазин", "магаз", "посад", "сильпо", "атб", "велмарт", "класс", "рост"],
-        "Расходники": ["расходники", "дезик", "зубная паста", "духи", "помада"],
-        "Лекарства": ["лекарства"],
-        "Развлечения": ["развлечения"],
-        "Еда вне дома": ["кафе", "кофе", "пицца", "суши", "шаурма", "макдак"],
-        "Проезд": ["проезд", "метро", "трамвай", "такси", "поезд"]
-    }
+    with open("categories.json", "r", encoding="utf8") as f:
+        categories: dict[str, list[str]] = json.load(f)
+
     for k, v in categories.items():
         if category.lower() in v:
             fixed_category = k

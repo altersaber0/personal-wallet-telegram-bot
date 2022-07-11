@@ -1,6 +1,7 @@
 import datetime
 import os.path
 from os import getcwd
+import json
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -163,16 +164,11 @@ def month_stat(month: str):
 
     # Total money spent in each category:
 
-    # Creating dictionary from categories list
-    categories = [
-        "Продукты",
-        "Расходники",
-        "Лекарства",
-        "Развлечения",
-        "Еда вне дома",
-        "Проезд",
-        "Другое"
-    ]
+    # Getting all category names
+    with open("categories.json", "r", encoding="utf8") as f:
+        categories = json.load(f)
+        categories = categories.keys()
+    # Creating dictionary with all 0 values as counters for each category
     each_category_total = {cat: 0 for cat in categories}
     for index, row in df.iterrows():
         money = row["Сумма"]
