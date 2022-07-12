@@ -6,7 +6,6 @@ from telegram.update import Update
 from deleting import InvalidDeleteQuery
 
 
-
 def parse_message(message: str) -> tuple[str, list[str]]:
     """Extract new category name and all aliases"""
     message = " ".join(message.split()[1:])
@@ -120,16 +119,3 @@ def show_categories(update: Update) -> None:
         update.message.reply_text(reply)
     except FileNotFoundError:
         update.message.reply_text("❌ Категории еще не добавлены. Файла на существует.")
-
-
-
-# {
-#     "Продукты": ["продукты", "магазин", "магаз", "велмарт", "сильпо", "посад", "атб"],
-#     "Расходники": ["расходники"],
-#     "Лекарства": ["лекарства"],
-#     "Развлечения": ["развлечения", "бухич"],
-#     "Еда вне дома": ["кафе", "кофе", "пицца", "шаурма", "буфет", "кулины"],
-#     "Проезд": ["проезд", "метро", "трамвай", "такси", "поезд", "транспорт"],
-#     "Ежемесячные": ["ежемесячный"],
-#     "Другое": ["другое"]
-# }
