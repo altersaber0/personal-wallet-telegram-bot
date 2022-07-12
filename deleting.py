@@ -33,7 +33,7 @@ def get_index_of_expense(message: str) -> int:
         raise InvalidDeleteQuery
 
 
-def handle_expense_deleting(update: Update) -> None:
+def handle_expense_deletion(update: Update) -> None:
     """
     Delete requested expense from database by provided index
     and reset the balance accordingly

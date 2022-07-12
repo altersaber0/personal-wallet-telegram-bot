@@ -8,6 +8,7 @@ import balance
 import exchange
 import month
 import deleting
+import categories
 import utils
 
 
@@ -59,6 +60,18 @@ def month_query(update: Update, context):
 def delete_expense(update: Update, context):
     deleting.handle_expense_deleting(update)
 
+@utils.authorize
+def show_categories(update: Update, context):
+    categories.show_categories(update)
+
+@utils.authorize
+def add_category(update: Update, context):
+    categories.handle_addition(update)
+
+@utils.authorize
+def delete_category(update: Update, context):
+    categories.handle_deletion(update)
+
 # Handle message based on its type (first word determines the type)
 @utils.authorize
 def handle_message(update: Update, context):
@@ -75,6 +88,12 @@ def handle_message(update: Update, context):
         case "month":
             month.handle_month_query(update)
         case "delete":
-            deleting.handle_expense_deleting(update)
+            deleting.handle_expense_deletion(update)
+        case "categories":
+            categories.show_categories(update)
+        case "add_category":
+            categories.handle_addition(update)
+        case "delete_category":
+            categories.handle_deletion(update)
         case _:
             update.message.reply_text("Неизвестная команда😐")

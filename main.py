@@ -31,6 +31,9 @@ def main():
     dp.add_handler(CommandHandler("convert", controller.convert, filters=correct_user_filter))
     dp.add_handler(CommandHandler("month", controller.month_query, filters=correct_user_filter))
     dp.add_handler(CommandHandler("delete", controller.delete_expense, filters=correct_user_filter))
+    dp.add_handler(CommandHandler("categories", controller.show_categories, filters=correct_user_filter))
+    dp.add_handler(CommandHandler("add_category", controller.add_category, filters=correct_user_filter))
+    dp.add_handler(CommandHandler("delete_category", controller.delete_category, filters=correct_user_filter))
     dp.add_handler(MessageHandler(Filters.text & correct_user_filter, controller.handle_message))
 
     print("Bot running...")

@@ -30,10 +30,18 @@ def get_type_of_message(message: str) -> str:
         return "exchange_query"
     if command in ["месяц", "month"]:
         return "month"
+    if command in ["add", "добавить"]:
+        return "add_category"
     if command in ["del", "delete"]:
-        return "delete"
-    # if command[0] == ".":
-    #     return "todo"
-    # if command[0] == "?":
-    #     return "search"
+        try:
+            int(message.split()[1])
+            return "delete_expense"
+        except IndexError:
+            return "delete_expense"
+        except ValueError:
+            return "delete_category"
+    if command in ["categories", "категории"]:
+        return "categories"
+
+        
     return "nonsense"

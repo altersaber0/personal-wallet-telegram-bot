@@ -164,7 +164,7 @@ def month_stat(month: str):
 
     # Total money spent in each category:
 
-    # Getting all category names
+    # Getting all category names (raise FileNotFoundError if file doesn't exist)
     with open("categories.json", "r", encoding="utf8") as f:
         categories = json.load(f)
         categories = categories.keys()

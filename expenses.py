@@ -10,16 +10,22 @@ import db
 
 def fix_category(category: str):
     """
-    Replace category with a proper name if it's an alias or with \"Other\" if not
+    Replace category with a proper name if it's an alias or with \"Other\" if not, or, if categories file doesn't exist, create one and add \"Other\" to it.
     """
+    # If categories.json file exists
+    try:
+        with open("categories.json", "r", encoding="utf8") as f:
+            categories: dict[str, list[str]] = json.load(f)
 
-    with open("categories.json", "r", encoding="utf8") as f:
-        categories: dict[str, list[str]] = json.load(f)
-
-    for k, v in categories.items():
-        if category.lower() in v:
-            fixed_category = k
-            return fixed_category
+        for k, v in categories.items():
+            if category.lower() in v:
+                fixed_category = k
+                return fixed_category
+    # Create file and insert "Other" in it, if it doens't already exist
+    except FileNotFoundError:
+        with open("categories.json", "a", encoding="utf8") as f:
+            categories = json.dumps({"Другое": ["другое"]}, indent=4, ensure_ascii=False)
+            f.write(categories)
 
     fixed_category = "Другое"
     return fixed_category
@@ -117,7 +123,7 @@ def handle_expense(update: Update) -> None:
 
         # Checking if function is called by Command Handler instead of Message Handler
         if message == "/expense":
-            update.message.reply_text("❌Ошибка в записи расхода❌")
+            update.message.reply_text("❌ Ошибка в записи расхода")
             return
         if message.split()[0] == "/expense":
             message = " ".join(message.split()[1:])

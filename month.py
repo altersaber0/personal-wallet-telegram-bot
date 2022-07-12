@@ -54,6 +54,8 @@ def handle_month_query(update: Update):
     except db.MonthParseError:
         update.message.reply_text("❌ В данном месяце не было расходов.\nФайла не существует")
         return
+    except FileNotFoundError:
+        update.message.reply_text("❌ Категории еще не добавлены. Файла на существует.")
 
     msg = f"""
 Месяц: {month_stat["month"]}
