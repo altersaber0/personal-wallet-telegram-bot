@@ -7,7 +7,7 @@ from deleting import InvalidDeleteQuery
 
 
 def parse_message(message: str) -> tuple[str, list[str]]:
-    """Extract new category name and all aliases"""
+    """Extract new category name and all aliases from message"""
     message = " ".join(message.split()[1:])
 
     if not (":" in message):

@@ -18,7 +18,7 @@ class InvalidExchangeQueryError(Exception):
 class Exchange_Query():
     """
     Respresents an Exchange Query object.
-    Method convert() retrieves the exchange the information from an API.
+    Method convert() retrieves the exchange information from an API.
     """
     from_currency: str
     to_currency: str
